@@ -5,6 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "npx tsc",
+    "build:dev": "npx tsc -w",
+    "start": "node dist",
+    "start:dev": "node --watch dist",
+    "test": "npx jest --passWithNoTests",
+    "test:coverage": "npx jest --coverage --watchAll=false",
     "prepare": "husky install"
   },
   "keywords": [],
