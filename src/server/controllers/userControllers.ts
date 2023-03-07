@@ -1,4 +1,4 @@
-import "./loadEnvironment.js";
+import "../../loadEnvironment.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { type NextFunction, type Request, type Response } from "express";
@@ -17,10 +17,8 @@ export const loginUser = async (
 ) => {
   const { password, email } = req.body;
 
-  const userToFind = email.toString();
-
   try {
-    const user = await User.findOne({ email: userToFind }).exec();
+    const user = await User.findOne({ email }).exec();
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       const error = new CustomError(
