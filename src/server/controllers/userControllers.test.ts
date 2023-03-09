@@ -1,15 +1,17 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { CustomError } from "../../CustomError/CustomError";
 import User from "../../database/models/User";
+import { type CustomRequest } from "../../types";
 import { UserStructure, type UserCredentials } from "./types";
 import { loginUser } from "./userControllers";
 
-const req = {} as Request;
-const res = {
+const req: Partial<Request> = {};
+
+const res: Partial<Response> = {
   status: jest.fn().mockReturnThis(),
   json: jest.fn(),
-} as Partial<Response>;
-const next = jest.fn() as NextFunction;
+};
+const next: Partial<NextFunction> = jest.fn();
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -22,7 +24,7 @@ describe("Given a loginUser controller", () => {
   describe("When it receives a request with the email 'alex@gmail.com' and the password 'alex1234' and the email is not in the database", () => {
     test("Then it should call its next method with status 401 and the message 'Wrong credentials'", async () => {
       const expectedError = new CustomError(
-        "Wrong credentials",
+        "Introduced email not found",
         401,
         "Wrong credentials"
       );
@@ -33,7 +35,11 @@ describe("Given a loginUser controller", () => {
         exec: jest.fn().mockResolvedValue(undefined),
       }));
 
-      await loginUser(req, res as Response, next);
+      await loginUser(
+        req as CustomRequest,
+        res as Response,
+        next as NextFunction
+      );
 
       expect(next).toHaveBeenCalledWith(expectedError);
     });
@@ -47,7 +53,11 @@ describe("Given a loginUser controller", () => {
         exec: jest.fn().mockRejectedValue(error),
       }));
 
-      await loginUser(req, res as Response, next);
+      await loginUser(
+        req as CustomRequest,
+        res as Response,
+        next as NextFunction
+      );
 
       expect(next).toHaveBeenCalledWith(error);
     });

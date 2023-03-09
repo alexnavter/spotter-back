@@ -7,8 +7,6 @@ import User from "../database/models/User";
 import { type UserCredentials } from "../server/controllers/types";
 import request from "supertest";
 import { app } from "../server";
-import { validate } from "express-validation";
-import loginUserSchema from "../server/schemas/loginUserSchema";
 
 let mongodbServer: MongoMemoryServer;
 
@@ -67,6 +65,33 @@ describe("Given a POST `/users/login` endpoint", () => {
       const mockMarcelUser: UserCredentials = {
         email: "marcel@gmail.com",
         password: "marcel1234",
+      };
+
+      const response = await request(app)
+        .post(loginEndpoint)
+        .send(mockMarcelUser)
+        .expect(expectedStatus);
+
+      expect(response.body).toHaveProperty("error", expectedErrorMessage);
+    });
+  });
+
+  describe("When it receives a request with an email 'alex@gmail.com' with the password 'alex4321'", () => {
+    test("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
+      const expectedErrorMessage = "Wrong credentials";
+      const expectedStatus = 401;
+      const hashedPassword = await bcrypt.hash(mockUser.password, 10);
+
+      await User.create({
+        ...mockUser,
+        password: hashedPassword,
+        email: "alex@gmail.com",
+        username: "alex",
+      });
+
+      const mockMarcelUser: UserCredentials = {
+        email: "alex@gmail.com",
+        password: "alex4321",
       };
 
       const response = await request(app)
