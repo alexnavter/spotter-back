@@ -2,7 +2,7 @@ import createDebug from "debug";
 import { type CustomError } from "../CustomError/CustomError.js";
 import { app } from "./index.js";
 
-const debug = createDebug("spotter-api:startServer");
+const debug = createDebug("spotter-api:server:startServer");
 
 const startServer = async (port: number) =>
   new Promise((resolve, reject) => {

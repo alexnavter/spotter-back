@@ -20,14 +20,26 @@ export const loginUser = async (
   try {
     const user = await User.findOne({ email }).exec();
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      const error = new CustomError(
-        "Wrong credentials",
+    if (!user) {
+      const customError = new CustomError(
+        "Introduced email not found",
         401,
         "Wrong credentials"
       );
 
-      next(error);
+      next(customError);
+
+      return;
+    }
+
+    if (!(await bcrypt.compare(password, user.password))) {
+      const customError = new CustomError(
+        "Incorrect password",
+        401,
+        "Wrong credentials"
+      );
+
+      next(customError);
 
       return;
     }
