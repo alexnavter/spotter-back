@@ -16,5 +16,5 @@ try {
   await startServer(+port);
   debug(chalk.green(`Server listening on port ${port}`));
 } catch (error) {
-  debug(error.message);
+  debug((error as Error).message);
 }

@@ -12,8 +12,8 @@ const connectDatabase = async (url: string) => {
   });
   try {
     await mongoose.connect(url);
-  } catch (error: unknown) {
-    throw new Error((error as Error).message);
+  } catch (error) {
+    throw new Error("Error while connecting to database.");
   }
 };
 
