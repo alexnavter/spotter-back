@@ -16,8 +16,6 @@ const startServer = async (port: number) =>
       if (error.code === "EADDRINUSE") {
         debug(errorMessage, `The port number ${port} is already in use`);
       }
-
-      reject(new Error(errorMessage));
     });
   });
 
