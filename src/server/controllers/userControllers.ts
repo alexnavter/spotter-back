@@ -71,6 +71,33 @@ export const registerUser = async (
   const { username, email, password } = req.body;
 
   try {
+    const emailToFind = await User.findOne({ email }).exec();
+    const userNameToFind = await User.findOne({ username }).exec();
+
+    if (emailToFind) {
+      const customError = new CustomError(
+        "Email already exists",
+        409,
+        "Email already exists"
+      );
+
+      next(customError);
+
+      return;
+    }
+
+    if (userNameToFind) {
+      const customError = new CustomError(
+        "Username already exists",
+        409,
+        "Username already exists"
+      );
+
+      next(customError);
+
+      return;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 8);
 
     const user = await User.create({
