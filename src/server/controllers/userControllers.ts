@@ -4,7 +4,11 @@ import jwt from "jsonwebtoken";
 import { type NextFunction, type Request, type Response } from "express";
 import { CustomError } from "../../CustomError/CustomError.js";
 import User from "../../database/models/User.js";
-import { type CustomJwtPayload, type UserCredentials } from "./types.js";
+import {
+  type UserStructure,
+  type CustomJwtPayload,
+  type UserCredentials,
+} from "./types.js";
 
 export const loginUser = async (
   req: Request<
@@ -56,5 +60,33 @@ export const loginUser = async (
     res.status(200).json({ token });
   } catch (error) {
     next(error);
+  }
+};
+
+export const registerUser = async (
+  req: Request<Record<string, unknown>, Record<string, unknown>, UserStructure>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { username, email, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    res.status(201).json({ user });
+  } catch (error) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Couldn't register the user"
+    );
+
+    next(customError);
   }
 };

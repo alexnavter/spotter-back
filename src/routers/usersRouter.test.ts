@@ -89,14 +89,14 @@ describe("Given a POST `/users/login` endpoint", () => {
         username: "alex",
       });
 
-      const mockMarcelUser: UserCredentials = {
+      const mockAlexUser: UserCredentials = {
         email: "alex@gmail.com",
         password: "alex4321",
       };
 
       const response = await request(app)
         .post(loginEndpoint)
-        .send(mockMarcelUser)
+        .send(mockAlexUser)
         .expect(expectedStatus);
 
       expect(response.body).toHaveProperty("error", expectedErrorMessage);
