@@ -68,11 +68,12 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { username, email, password } = req.body;
-
   try {
-    const emailToFind = await User.findOne({ email }).exec();
-    const userNameToFind = await User.findOne({ username }).exec();
+    const { username, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    const emailToFind = await User.findOne({ email });
+    const userNameToFind = await User.findOne({ username });
 
     if (emailToFind) {
       const customError = new CustomError(
@@ -98,15 +99,13 @@ export const registerUser = async (
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 8);
-
-    const user = await User.create({
+    await User.create({
       username,
       email,
       password: hashedPassword,
     });
 
-    res.status(201).json({ user });
+    res.status(201).json({ message: "User has been created" });
   } catch (error) {
     const customError = new CustomError(
       (error as Error).message,
