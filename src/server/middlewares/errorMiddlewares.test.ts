@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express";
 import { CustomError } from "../../CustomError/CustomError";
-import { type CustomRegisterRequest } from "../../types";
+import { type CustomRegisterRequest } from "../../types/types";
 import { generalError, notFoundError } from "./errorMiddlewares";
 
 beforeEach(() => {

@@ -4,7 +4,7 @@ import User from "../../database/models/User";
 import {
   type CustomLoginRequest,
   type CustomRegisterRequest,
-} from "../../types";
+} from "../../types/types";
 import { type RegisterCredentials, type LoginCredentials } from "./types";
 import { loginUser, registerUser } from "./userControllers";
 import bcrypt from "bcryptjs";
