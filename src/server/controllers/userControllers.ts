@@ -82,9 +82,7 @@ export const registerUser = async (
         "Email already exists"
       );
 
-      next(customError);
-
-      return;
+      throw customError;
     }
 
     if (userNameToFind) {
@@ -94,9 +92,7 @@ export const registerUser = async (
         "Username already exists"
       );
 
-      next(customError);
-
-      return;
+      throw customError;
     }
 
     await User.create({

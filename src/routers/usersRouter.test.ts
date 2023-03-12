@@ -159,13 +159,10 @@ describe("Given a POST at the '/users/register' endpoint", () => {
       await User.create({
         ...mockUser,
         username: "Alex",
-        email: "alexnavter@gmail.com",
+        email: "alex@gmail.com",
         password: "admin1234",
       });
 
-      jwt.sign = jest.fn().mockImplementation(() => ({
-        token: "ffiajdieinjggggggaaaawd",
-      }));
       const expectedStatus = 409;
 
       const response = await request(app)
