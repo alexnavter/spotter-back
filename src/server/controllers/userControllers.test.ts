@@ -5,7 +5,7 @@ import {
   type CustomLoginRequest,
   type CustomRegisterRequest,
 } from "../../types";
-import { type UserStructure, type UserCredentials } from "./types";
+import { type RegisterCredentials, type LoginCredentials } from "./types";
 import { loginUser, registerUser } from "./userControllers";
 import bcrypt from "bcryptjs";
 
@@ -20,7 +20,7 @@ describe("Given a loginUser controller", () => {
   };
   const next: Partial<NextFunction> = jest.fn();
 
-  const mockUser: UserCredentials = {
+  const mockUser: LoginCredentials = {
     email: "alex@gmail.com",
     password: "alex1234",
   };
@@ -81,7 +81,7 @@ describe("Given a registerUser controller", () => {
       const expectedStatusCode = 201;
       const expectedBodyResponse = { message: "User has been created" };
 
-      const mockCreateUser: UserStructure = {
+      const mockCreateUser: RegisterCredentials = {
         username: "Alex",
         email: "alex@gmail.com",
         password: "admin1234",
@@ -105,7 +105,7 @@ describe("Given a registerUser controller", () => {
 
   describe("When there is a database error or another error is thrown", () => {
     test("Then it should call its next method passing that error", async () => {
-      const newUser: UserStructure = {
+      const newUser: RegisterCredentials = {
         username: "Alex",
         email: "alex@gmail.com",
         password: "admin1234",

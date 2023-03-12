@@ -5,16 +5,16 @@ import { type NextFunction, type Request, type Response } from "express";
 import { CustomError } from "../../CustomError/CustomError.js";
 import User from "../../database/models/User.js";
 import {
-  type UserStructure,
+  type RegisterCredentials,
   type CustomJwtPayload,
-  type UserCredentials,
+  type LoginCredentials,
 } from "./types.js";
 
 export const loginUser = async (
   req: Request<
     Record<string, unknown>,
     Record<string, unknown>,
-    UserCredentials
+    LoginCredentials
   >,
   res: Response,
   next: NextFunction
@@ -31,9 +31,7 @@ export const loginUser = async (
         "Wrong credentials"
       );
 
-      next(customError);
-
-      return;
+      throw customError;
     }
 
     if (!(await bcrypt.compare(password, user.password))) {
@@ -43,9 +41,7 @@ export const loginUser = async (
         "Wrong credentials"
       );
 
-      next(customError);
-
-      return;
+      throw customError;
     }
 
     const jwtPayload: CustomJwtPayload = {
@@ -64,13 +60,16 @@ export const loginUser = async (
 };
 
 export const registerUser = async (
-  req: Request<Record<string, unknown>, Record<string, unknown>, UserStructure>,
+  req: Request<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    RegisterCredentials
+  >,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 8);
 
     const emailToFind = await User.findOne({ email });
     const userNameToFind = await User.findOne({ username });
@@ -81,8 +80,8 @@ export const registerUser = async (
         409,
         "Email already exists"
       );
-
-      throw customError;
+      next(customError);
+      return;
     }
 
     if (userNameToFind) {
@@ -91,9 +90,11 @@ export const registerUser = async (
         409,
         "Username already exists"
       );
-
-      throw customError;
+      next(customError);
+      return;
     }
+
+    const hashedPassword = await bcrypt.hash(password, 8);
 
     await User.create({
       username,

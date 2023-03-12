@@ -1,17 +1,17 @@
 import { type Request } from "express";
 import {
-  type UserCredentials,
-  type UserStructure,
+  type LoginCredentials,
+  type RegisterCredentials,
 } from "./server/controllers/types";
 
 export type CustomRegisterRequest = Request<
   Record<string, unknown>,
   Record<string, unknown>,
-  UserStructure
+  RegisterCredentials
 >;
 
 export type CustomLoginRequest = Request<
   Record<string, unknown>,
   Record<string, unknown>,
-  UserCredentials
+  LoginCredentials
 >;
