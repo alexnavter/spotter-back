@@ -1,11 +1,11 @@
 import { type JwtPayload } from "jsonwebtoken";
 
-export interface UserCredentials {
+export interface LoginCredentials {
   email: string;
   password: string;
 }
 
-export interface UserStructure extends UserCredentials {
+export interface RegisterCredentials extends LoginCredentials {
   username: string;
 }
 

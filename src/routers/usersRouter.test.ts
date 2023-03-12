@@ -5,13 +5,11 @@ import mongoose from "mongoose";
 import connectDatabase from "../database/connectDatabase";
 import User from "../database/models/User";
 import {
-  type UserStructure,
-  type UserCredentials,
+  type RegisterCredentials,
+  type LoginCredentials,
 } from "../server/controllers/types";
 import request from "supertest";
 import { app } from "../server";
-import { registerUser } from "../server/controllers/userControllers";
-import { usersRouter } from "./usersRouter";
 
 let mongodbServer: MongoMemoryServer;
 
@@ -33,7 +31,7 @@ afterEach(async () => {
 
 describe("Given a POST `/users/login` endpoint", () => {
   const loginEndpoint = "/users/login";
-  const mockUser: UserCredentials = {
+  const mockUser: LoginCredentials = {
     email: "alex@gmail.com",
     password: "alex1234",
   };
@@ -64,10 +62,10 @@ describe("Given a POST `/users/login` endpoint", () => {
   });
 
   describe("When it receives a request with an email 'marcel@gmail.com' that is not registered and a password 'marcel1234'", () => {
-    test("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
+    test("Then it should throw an error with the message 'Wrong credentials' and status 401", async () => {
       const expectedErrorMessage = "Wrong credentials";
       const expectedStatus = 401;
-      const mockMarcelUser: UserCredentials = {
+      const mockMarcelUser: LoginCredentials = {
         email: "marcel@gmail.com",
         password: "marcel1234",
       };
@@ -81,20 +79,12 @@ describe("Given a POST `/users/login` endpoint", () => {
     });
   });
 
-  describe("When it receives a request with an email 'alex@gmail.com' with the password 'alex4321'", () => {
+  describe("When it receives a request with an email 'alex@gmail.com' with the password 'alex4321' that is not correct", () => {
     test("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
       const expectedErrorMessage = "Wrong credentials";
       const expectedStatus = 401;
-      const hashedPassword = await bcrypt.hash(mockUser.password, 10);
 
-      await User.create({
-        ...mockUser,
-        password: hashedPassword,
-        email: "alex@gmail.com",
-        username: "alex",
-      });
-
-      const mockAlexUser: UserCredentials = {
+      const mockAlexUser: LoginCredentials = {
         email: "alex@gmail.com",
         password: "alex4321",
       };
@@ -111,16 +101,16 @@ describe("Given a POST `/users/login` endpoint", () => {
 
 describe("Given a POST at the '/users/register' endpoint", () => {
   const registerRoute = "/users/register";
-  const mockUser: UserStructure = {
+  const mockUser: RegisterCredentials = {
     email: "alex@gmail.com",
-    password: "admin1234",
+    password: "admin1234567",
     username: "Alex",
   };
 
-  describe("When it receives a request with email 'alex@gmail.com', the username 'Alex' and the password 'admin1234'", () => {
+  describe("When it receives a request with email 'alex@gmail.com', the username 'Alex' and the password 'admin1234567'", () => {
     test("Then it should respond with a status 201 the message 'User has been created'", async () => {
       jwt.sign = jest.fn().mockImplementation(() => ({
-        token: "asdfasdfasdfweqefa",
+        token: "a123l456e789x",
       }));
 
       const expectedStatus = 201;
@@ -134,13 +124,13 @@ describe("Given a POST at the '/users/register' endpoint", () => {
     });
   });
 
-  describe("When it receives a request with email 'alex@gmail.com' that already exists and password 'admin4312' and the username 'Alex'", () => {
+  describe("When it receives a request with email 'alex@gmail.com' that already exists and password 'admin7654312' and the username 'Alex'", () => {
     test("Then it should respond with a status 409 and with an object in its body with a property 'error'", async () => {
       await User.create({
         ...mockUser,
         username: "Alex",
         email: "alex@gmail.com",
-        password: "admin1234",
+        password: "admin1234567",
       });
 
       const expectedStatus = 409;
@@ -154,18 +144,15 @@ describe("Given a POST at the '/users/register' endpoint", () => {
     });
   });
 
-  describe("When it receives a request with email 'alex@gmail.com' and password 'admin1234' and the username 'Alex' that already exists", () => {
+  describe("When it receives a request with email 'alex@gmail.com' and password 'admin1234567' and the username 'Alex' that already exists", () => {
     test("Then it should respond with a status 409 and with an object in its body with a property 'error'", async () => {
       await User.create({
         ...mockUser,
         username: "Alex",
-        email: "alexnavter@gmail.com",
-        password: "admin1234",
+        email: "alex@gmail.com",
+        password: "admin1234567",
       });
 
-      jwt.sign = jest.fn().mockImplementation(() => ({
-        token: "ffiajdieinjggggggaaaawd",
-      }));
       const expectedStatus = 409;
 
       const response = await request(app)
