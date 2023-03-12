@@ -2,7 +2,7 @@ import { type Request } from "express";
 import {
   type LoginCredentials,
   type RegisterCredentials,
-} from "../server/controllers/types";
+} from "../server/controllers/usersControllers/types";
 
 export interface ExerciseStructure {
   name: string;

@@ -7,7 +7,7 @@ import User from "../database/models/User";
 import {
   type RegisterCredentials,
   type LoginCredentials,
-} from "../server/controllers/types";
+} from "../server/controllers/usersControllers/types";
 import request from "supertest";
 import { app } from "../server";
 
