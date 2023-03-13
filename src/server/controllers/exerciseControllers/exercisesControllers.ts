@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express";
-import { CustomError } from "../../../CustomError/CustomError";
-import Exercise from "../../../database/models/Exercise";
+import { CustomError } from "../../../CustomError/CustomError.js";
+import Exercise from "../../../database/models/Exercise.js";
 
 export const getExercises = async (
   req: Request,

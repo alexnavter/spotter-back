@@ -2,14 +2,14 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
-import connectDatabase from "../database/connectDatabase";
-import User from "../database/models/User";
+import connectDatabase from "../../database/connectDatabase";
+import User from "../../database/models/User";
 import {
   type RegisterCredentials,
   type LoginCredentials,
-} from "../server/controllers/usersControllers/types";
+} from "../../server/controllers/usersControllers/types";
 import request from "supertest";
-import { app } from "../server";
+import { app } from "../../server";
 
 let mongodbServer: MongoMemoryServer;
 
@@ -47,7 +47,6 @@ describe("Given a POST `/users/login` endpoint", () => {
 
       await User.create({
         ...mockUser,
-        password: hashedPassword,
         email: "alex@gmail.com",
         username: "alex",
       });
@@ -80,7 +79,7 @@ describe("Given a POST `/users/login` endpoint", () => {
   });
 
   describe("When it receives a request with an email 'alex@gmail.com' with the password 'alex4321' that is not correct", () => {
-    test("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
+    test.only("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
       const expectedErrorMessage = "Wrong credentials";
       const expectedStatus = 401;
 
