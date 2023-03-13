@@ -1,12 +1,12 @@
 import { type Request, type Response, type NextFunction } from "express";
-import { CustomError } from "../../CustomError/CustomError";
-import User from "../../database/models/User";
+import { CustomError } from "../../../CustomError/CustomError";
+import User from "../../../database/models/User";
 import {
   type CustomLoginRequest,
   type CustomRegisterRequest,
-} from "../../types";
+} from "../../../types/types";
 import { type RegisterCredentials, type LoginCredentials } from "./types";
-import { loginUser, registerUser } from "./userControllers";
+import { loginUser, registerUser } from "./usersControllers";
 import bcrypt from "bcryptjs";
 
 beforeEach(() => jest.clearAllMocks());
