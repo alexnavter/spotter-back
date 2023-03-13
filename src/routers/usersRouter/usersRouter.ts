@@ -3,9 +3,9 @@ import { validate } from "express-validation";
 import {
   loginUser,
   registerUser,
-} from "../server/controllers/usersControllers/usersControllers.js";
-import loginUserSchema from "../server/schemas/loginUserSchema.js";
-import registerUserSchema from "../server/schemas/registerUserSchema.js";
+} from "../../server/controllers/usersControllers/usersControllers.js";
+import loginUserSchema from "../../server/schemas/loginUserSchema.js";
+import registerUserSchema from "../../server/schemas/registerUserSchema.js";
 
 export const usersRouter = Router();
 
