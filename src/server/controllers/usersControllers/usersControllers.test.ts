@@ -11,6 +11,10 @@ import bcrypt from "bcryptjs";
 
 beforeEach(() => jest.clearAllMocks());
 
+afterEach(async () => {
+  jest.clearAllMocks();
+});
+
 describe("Given a loginUser controller", () => {
   const req: Partial<Request> = {};
 
@@ -20,7 +24,7 @@ describe("Given a loginUser controller", () => {
   };
   const next: Partial<NextFunction> = jest.fn();
 
-  const mockUser: LoginCredentials = {
+  const mockLoginUser: LoginCredentials = {
     email: "alex@gmail.com",
     password: "alex1234",
   };
@@ -33,7 +37,7 @@ describe("Given a loginUser controller", () => {
         "Wrong credentials"
       );
 
-      req.body = mockUser;
+      req.body = mockLoginUser;
 
       User.findOne = jest.fn().mockImplementationOnce(() => ({
         exec: jest.fn().mockResolvedValue(undefined),
@@ -75,22 +79,28 @@ describe("Given a registerUser controller", () => {
     status: jest.fn().mockReturnThis(),
     json: jest.fn(),
   };
+
   const next: Partial<NextFunction> = jest.fn();
+
+  const mockRegisterUser: RegisterCredentials = {
+    username: "Alex",
+    email: "alex@gmail.com",
+    password: "admin1234",
+  };
+
   describe("When it receives a request with email 'alex@gmail.com', username 'Alex and password 'admin1234'", () => {
     test("Then it should call its status method with code 201 and its json method with the created user", async () => {
       const expectedStatusCode = 201;
       const expectedBodyResponse = { message: "User has been created" };
 
-      const mockCreateUser: RegisterCredentials = {
-        username: "Alex",
-        email: "alex@gmail.com",
-        password: "admin1234",
-      };
+      req.body = mockRegisterUser;
 
-      req.body = mockCreateUser;
+      User.findOne = jest.fn().mockImplementation(() => ({
+        exec: jest.fn().mockReturnValue(undefined),
+      }));
 
       bcrypt.hash = jest.fn().mockResolvedValue("asda123hjassdasdascasd123hjk");
-      User.create = jest.fn().mockResolvedValue(mockCreateUser);
+      User.create = jest.fn().mockResolvedValue(mockRegisterUser);
 
       await registerUser(
         req as CustomRegisterRequest,
@@ -105,19 +115,17 @@ describe("Given a registerUser controller", () => {
 
   describe("When there is a database error or another error is thrown", () => {
     test("Then it should call its next method passing that error", async () => {
-      const newUser: RegisterCredentials = {
-        username: "Alex",
-        email: "alex@gmail.com",
-        password: "admin1234",
-      };
-
       const expectedError = new CustomError(
         "Error",
         500,
         "Couldn't register the user"
       );
 
-      req.body = newUser;
+      req.body = mockRegisterUser;
+
+      User.findOne = jest.fn().mockImplementation(() => ({
+        exec: jest.fn().mockReturnValue(undefined),
+      }));
 
       User.create = jest.fn().mockImplementationOnce(() => {
         throw new Error("Error");

@@ -43,7 +43,6 @@ describe("Given a POST `/users/login` endpoint", () => {
       }));
 
       const expectedStatus = 200;
-      const hashedPassword = await bcrypt.hash(mockUser.password, 10);
 
       await User.create({
         ...mockUser,
@@ -79,7 +78,7 @@ describe("Given a POST `/users/login` endpoint", () => {
   });
 
   describe("When it receives a request with an email 'alex@gmail.com' with the password 'alex4321' that is not correct", () => {
-    test.only("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
+    test("Then it should response with an error with the message 'Wrong credentials' and status 401", async () => {
       const expectedErrorMessage = "Wrong credentials";
       const expectedStatus = 401;
 
