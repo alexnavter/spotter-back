@@ -71,8 +71,8 @@ export const registerUser = async (
   try {
     const { username, email, password } = req.body;
 
-    const emailToFind = await User.findOne({ email });
-    const userNameToFind = await User.findOne({ username });
+    const emailToFind = await User.findOne({ email }).exec();
+    const userNameToFind = await User.findOne({ username }).exec();
 
     if (emailToFind) {
       const customError = new CustomError(
