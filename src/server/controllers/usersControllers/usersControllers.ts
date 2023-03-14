@@ -20,7 +20,6 @@ export const loginUser = async (
   next: NextFunction
 ) => {
   const { password, email } = req.body;
-
   try {
     const user = await User.findOne({ email }).exec();
 
@@ -34,7 +33,7 @@ export const loginUser = async (
       throw customError;
     }
 
-    if (await bcrypt.compare(password, user.password)) {
+    if (!(await bcrypt.compare(password, user.password))) {
       const customError = new CustomError(
         "Incorrect password",
         401,
@@ -68,32 +67,9 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { username, email, password } = req.body;
+
   try {
-    const { username, email, password } = req.body;
-
-    const emailToFind = await User.findOne({ email }).exec();
-    const userNameToFind = await User.findOne({ username }).exec();
-
-    if (emailToFind) {
-      const customError = new CustomError(
-        "Email already exists",
-        409,
-        "Email already exists"
-      );
-      next(customError);
-      return;
-    }
-
-    if (userNameToFind) {
-      const customError = new CustomError(
-        "Username already exists",
-        409,
-        "Username already exists"
-      );
-      next(customError);
-      return;
-    }
-
     const hashedPassword = await bcrypt.hash(password, 8);
 
     await User.create({

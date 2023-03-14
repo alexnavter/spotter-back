@@ -88,7 +88,7 @@ describe("Given a registerUser controller", () => {
     password: "admin1234",
   };
 
-  describe("When it receives a request with email 'alex@gmail.com', username 'Alex and password 'admin1234'", () => {
+  describe("When it receives a request to register the user username: 'Alex', email: 'alex@gmail.com', password: 'admin1234'", () => {
     test("Then it should call its status method with code 201 and its json method with the created user", async () => {
       const expectedStatusCode = 201;
       const expectedBodyResponse = { message: "User has been created" };
@@ -122,10 +122,6 @@ describe("Given a registerUser controller", () => {
       );
 
       req.body = mockRegisterUser;
-
-      User.findOne = jest.fn().mockImplementation(() => ({
-        exec: jest.fn().mockReturnValue(undefined),
-      }));
 
       User.create = jest.fn().mockImplementationOnce(() => {
         throw new Error("Error");
