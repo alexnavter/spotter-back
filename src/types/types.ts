@@ -5,9 +5,10 @@ import {
 } from "../server/controllers/usersControllers/types";
 
 export interface ExerciseStructure {
+  id: string;
   name: string;
   image: string;
-  type: "cardio" | "strength" | "hypertrophy";
+  type: string;
   equipment: string;
   difficulty: number;
   muscles: {
@@ -19,6 +20,7 @@ export interface ExerciseStructure {
   reps: number;
   rest: number;
   duration: number;
+  createdBy: string;
 }
 
 export type ExercisesStructure = ExerciseStructure[];
@@ -34,3 +36,7 @@ export type CustomLoginRequest = Request<
   Record<string, unknown>,
   LoginCredentials
 >;
+
+export interface CustomUserRequest extends Request {
+  createdBy: string;
+}
