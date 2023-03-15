@@ -2,7 +2,7 @@ import { type NextFunction, type Response } from "express";
 import { type CustomUserRequest } from "../../../types/types";
 import { type CustomJwtPayload } from "../../controllers/usersControllers/types";
 import jwt from "jsonwebtoken";
-import { CustomError } from "../../../CustomError/CustomError";
+import { CustomError } from "../../../CustomError/CustomError.js";
 
 const auth = (req: CustomUserRequest, res: Response, next: NextFunction) => {
   try {
