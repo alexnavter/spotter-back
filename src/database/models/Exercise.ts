@@ -54,6 +54,7 @@ const exerciseSchema = new Schema({
     type: Number,
     required: false,
   },
+  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Exercise = model("Exercise", exerciseSchema, "exercises");

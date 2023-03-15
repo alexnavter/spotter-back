@@ -8,6 +8,7 @@ import { type Request, type Response } from "express";
 import { CustomError } from "../../../CustomError/CustomError";
 
 const mockBenchPress: ExerciseStructure = {
+  id: "1",
   name: "Bench Press",
   type: "strength",
   equipment: "Barbell, Bench",
@@ -23,9 +24,11 @@ const mockBenchPress: ExerciseStructure = {
   rest: 60,
   duration: 0,
   image: "https://example.com/bench-press.jpg",
+  createdBy: "Alex",
 };
 
 const mockSquat: ExerciseStructure = {
+  id: "2",
   name: "Squat",
   type: "strength",
   equipment: "Barbell, Power Rack",
@@ -41,6 +44,7 @@ const mockSquat: ExerciseStructure = {
   rest: 90,
   duration: 0,
   image: "https://example.com/squat.jpg",
+  createdBy: "Alex",
 };
 
 const mockExercisesList: ExercisesStructure = [mockBenchPress, mockSquat];
