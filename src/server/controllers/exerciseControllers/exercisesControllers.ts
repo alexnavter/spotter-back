@@ -42,3 +42,28 @@ export const getUserExercises = async (
     next(customError);
   }
 };
+
+export const deleteExercise = async (
+  req: CustomUserRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { idExercise } = req.params;
+
+  try {
+    const exercise = await Exercise.findByIdAndDelete({
+      _id: idExercise,
+      createdBy: req.createdBy,
+    }).exec();
+
+    res.status(200).json({ exercise });
+  } catch (error) {
+    const customError = new CustomError(
+      "Something went wrong",
+      500,
+      "Could not delete the exercise"
+    );
+
+    next(customError);
+  }
+};
