@@ -27,7 +27,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe("Given a '/exercises' get endpoint", () => {
+describe("Given a '/exercises' endpoint", () => {
   describe("When it receives a request with the GET method", () => {
     test("Then it should respond with status code 200", async () => {
       const expectedStatus = 200;
