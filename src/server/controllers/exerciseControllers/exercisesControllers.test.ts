@@ -4,7 +4,11 @@ import {
   type ExercisesStructure,
   type ExerciseStructure,
 } from "../../../types/types";
-import { getExercises, getUserExercises } from "./exercisesControllers";
+import {
+  deleteExercise,
+  getExercises,
+  getUserExercises,
+} from "./exercisesControllers";
 import { type Request, type Response } from "express";
 import { CustomError } from "../../../CustomError/CustomError";
 
@@ -158,6 +162,60 @@ describe("Given a getUserExercises controller", () => {
       req.body = {};
 
       await getUserExercises(req as CustomUserRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(expectedError);
+    });
+  });
+});
+
+describe("Given a deleteExercise controller", () => {
+  describe("When it receives a response", () => {
+    test("Then it should call its status method with status 200", async () => {
+      const req: Partial<CustomUserRequest> = {
+        params: { id: `${mockBenchPress.id}` },
+      };
+
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue(mockBenchPress.id),
+      };
+
+      const next = jest.fn();
+
+      const expectedStatus = 200;
+
+      Exercise.findByIdAndDelete = jest.fn().mockImplementationOnce(() => ({
+        exec: jest.fn().mockReturnValue(mockBenchPress),
+      }));
+
+      await deleteExercise(req as CustomUserRequest, res as Response, next);
+
+      expect(res.json).toHaveBeenCalledWith({ exercise: mockBenchPress });
+    });
+  });
+
+  describe("When it receives a bad request", () => {
+    test("Then it should call its next function with an error", async () => {
+      const req: Partial<CustomUserRequest> = {};
+
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue({}),
+      };
+
+      const next = jest.fn();
+
+      req.params = {};
+
+      const expectedError = new CustomError(
+        "Something went wrong",
+        500,
+        "Could not delete the exercise"
+      );
+
+      Exercise.findByIdAndDelete = jest.fn().mockReturnValue(undefined);
+
+      await deleteExercise(req as CustomUserRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
     });
