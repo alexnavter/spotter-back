@@ -25,6 +25,12 @@ export interface ExerciseStructure {
 
 export type ExercisesStructure = ExerciseStructure[];
 
+export type CustomCreateExerciseRequest = Request<
+  Record<string, unknown>,
+  Record<string, unknown>,
+  ExerciseStructure
+>;
+
 export type CustomRegisterRequest = Request<
   Record<string, unknown>,
   Record<string, unknown>,

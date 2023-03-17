@@ -5,10 +5,6 @@ const exerciseSchema = new Schema({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-    required: true,
-  },
   type: {
     type: String,
     enum: ["Upper body", "Lower body"],
@@ -53,6 +49,14 @@ const exerciseSchema = new Schema({
   duration: {
     type: Number,
     required: false,
+  },
+  image: {
+    type: String,
+    required: true,
+  },
+  backupImage: {
+    type: String,
+    required: true,
   },
   createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
