@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import {
+  createExercise,
   deleteExercise,
   getExercises,
   getUserExercises,
@@ -27,9 +28,16 @@ const upload = multer({ storage });
 const getExercisesRoute = "/";
 const getUserExercisesRoute = "/my-exercises";
 const deleteExerciseRoute = "/delete/:idExercise";
+const createExerciseRoute = "/create-exercise";
 
 exercisesRouter.get(getExercisesRoute, getExercises);
 exercisesRouter.get(getUserExercisesRoute, auth, getUserExercises);
 exercisesRouter.delete(deleteExerciseRoute, auth, deleteExercise);
+exercisesRouter.post(
+  createExerciseRoute,
+  auth,
+  upload.single("image"),
+  createExercise
+);
 
 export default exercisesRouter;
