@@ -23,11 +23,12 @@ const exerciseSchema = new Schema({
   muscles: {
     primary: {
       type: String,
-      required: true,
+      required: false,
     },
     secondary: {
       type: [String],
       default: [],
+      required: false,
     },
   },
   description: {
