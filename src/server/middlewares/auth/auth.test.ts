@@ -1,74 +1,88 @@
-import { type NextFunction, type Response, type Request } from "express";
-import { CustomError } from "../../../CustomError/CustomError";
-import { type CustomUserRequest } from "../../../types/types";
-import jwt from "jsonwebtoken";
-import auth from "./auth";
+import { type Request, type NextFunction, type Response } from "express";
 import mongoose from "mongoose";
+import { CustomError } from "../../../CustomError/CustomError";
+import auth from "./auth";
+import jwt from "jsonwebtoken";
+import { type CustomRequest } from "../../../types/types";
+
+afterEach(() => jest.clearAllMocks());
+
+const req: Partial<Request> = {};
+const res: Partial<Response> = {};
+const next: NextFunction = jest.fn();
 
 describe("Given an auth middleware", () => {
-  describe("When it receives a request that has not authorization header", () => {
-    test("Then it should call its next function with an error, status code 401, and the message 'Missing token'", () => {
-      const req: Partial<CustomUserRequest> = {
+  describe("When it receives a request and the authorization header is missing", () => {
+    test("Then it should call its next function with an error, status: 401 and message: 'Missing token'", () => {
+      const req: Partial<CustomRequest> = {
         header: jest.fn().mockReturnValue(undefined),
       };
-      const res: Partial<Response> = {};
-      const next: NextFunction = jest.fn();
+
+      const expectedStatus = 401;
 
       const expectedError = new CustomError(
         "Authorization header is missing",
-        401,
+        expectedStatus,
         "Missing token"
       );
 
       jwt.verify = jest.fn().mockReturnValueOnce({});
 
-      auth(req as CustomUserRequest, res as Response, next);
+      auth(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
     });
   });
 
-  describe("When it receives a request with the following authorization header: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDA3MjlkY2U0OWQ5YTNhZmVjNjE3ZjIiLCJlbWFpbCI6ImFsZXhuYXZ0ZXJAZ21haWwuY29tIiwiaWF0IjoxNjc4ODc4OTE2LCJleHAiOjE2NzkwNTE3MTZ9.Ye8aFDa8SnfO8GnMbRc9zibCCLaQuxZ1NJyJuOz9g8k", () => {
-    test("Then it should add the token and the createdBy property to the body request and invoke next function", () => {
-      const req: Partial<Request> = {};
-      const res: Partial<Response> = {};
-      const next: NextFunction = jest.fn();
-
-      req.header = jest
-        .fn()
-        .mockReturnValueOnce(
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDA3MjlkY2U0OWQ5YTNhZmVjNjE3ZjIiLCJlbWFpbCI6ImFsZXhuYXZ0ZXJAZ21haWwuY29tIiwiaWF0IjoxNjc4ODc4OTE2LCJleHAiOjE2NzkwNTE3MTZ9.Ye8aFDa8SnfO8GnMbRc9zibCCLaQuxZ1NJyJuOz9g8k"
-        );
-
-      const createdBy = new mongoose.Types.ObjectId();
-      jwt.verify = jest.fn().mockReturnValueOnce({ sub: createdBy });
-
-      auth(req as CustomUserRequest, res as Response, next);
-
-      expect(next).toHaveBeenCalled();
-      expect(req).toHaveProperty("createdBy", createdBy);
-    });
-  });
-
-  describe("When it receives a request with authorization header that is missing the Bearer authentication", () => {
-    test("Then it should invoke next with error, status code 401, and the message 'Missing bearer authentication in header'", () => {
-      const req: Partial<CustomUserRequest> = {
+  describe("When it receives a request and the authorization header startin with 'Bearer ' is missing", () => {
+    test("Then it should call its next function with an error, status: 401 and message: 'Missing bearer in Authorization header'", () => {
+      const req: Partial<CustomRequest> = {
         header: jest.fn().mockReturnValue("123456"),
       };
-      const res: Partial<Response> = {};
-      const next: NextFunction = jest.fn();
+
+      const expectedStatus = 401;
 
       const expectedError = new CustomError(
         "Missing bearer authentication in header",
-        401,
+        expectedStatus,
         "Missing token"
       );
 
       jwt.verify = jest.fn().mockReturnValueOnce({});
 
-      auth(req as CustomUserRequest, res as Response, next);
+      auth(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
+    });
+  });
+
+  describe("When it receives a request with the authorization header: 'Bearer asdfghjklñqwertyuiop'", () => {
+    test("Then it should add the postedBy property and the token to the request and invoke next", () => {
+      const req: Partial<CustomRequest> = {};
+      req.header = jest.fn().mockReturnValueOnce("Bearer asdfghjklñqwertyuiop");
+
+      const userId = new mongoose.Types.ObjectId();
+
+      jwt.verify = jest.fn().mockReturnValueOnce({ sub: userId });
+
+      auth(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(req).toHaveProperty("userId", userId);
+    });
+  });
+
+  describe("When it receives a request with an undefined token'", () => {
+    test("Then it should add the userId property and the token to the request and invoke next", () => {
+      const req: Partial<Request> = {};
+
+      const postedBy = new mongoose.Types.ObjectId();
+
+      jwt.verify = jest.fn().mockReturnValueOnce({ sub: postedBy });
+
+      auth(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalled();
     });
   });
 });
