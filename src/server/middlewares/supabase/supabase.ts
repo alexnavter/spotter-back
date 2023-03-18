@@ -1,3 +1,4 @@
+import "../../../loadEnvironment.js";
 import fs from "fs/promises";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
@@ -34,5 +35,9 @@ const supaBase = async (
     next();
   } catch (error) {
     const customError = new Error("Cannot upload the image");
+
+    next(customError);
   }
 };
+
+export default supaBase;
