@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const exerciseSchema = new Schema({
+export const exerciseSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -21,15 +21,7 @@ const exerciseSchema = new Schema({
     required: true,
   },
   muscles: {
-    primary: {
-      type: String,
-      required: false,
-    },
-    secondary: {
-      type: [String],
-      default: [],
-      required: false,
-    },
+    type: [String],
   },
   description: {
     type: String,
@@ -57,11 +49,8 @@ const exerciseSchema = new Schema({
   },
   backupImage: {
     type: String,
-    required: true,
   },
   createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
-const Exercise = model("Exercise", exerciseSchema, "exercises");
-
-export default Exercise;
+export const Exercise = model("Exercise", exerciseSchema, "exercises");

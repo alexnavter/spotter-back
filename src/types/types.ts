@@ -8,12 +8,9 @@ export interface ExerciseData {
   name: string;
   image: string;
   type: string;
-  equipment: string;
+  equipment: string[];
   difficulty: number;
-  muscles: {
-    primary: string;
-    secondary: string[];
-  };
+  muscles: string[];
   description: string;
   sets: number;
   reps: number;
