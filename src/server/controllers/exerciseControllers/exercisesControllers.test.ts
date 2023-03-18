@@ -1,8 +1,7 @@
-import Exercise from "../../../database/models/Exercise";
 import {
-  type CustomUserRequest,
-  type ExercisesStructure,
-  type ExerciseStructure,
+  type CustomRequest,
+  type ExercisesData,
+  type ExerciseData,
 } from "../../../types/types";
 import {
   deleteExercise,
@@ -11,17 +10,15 @@ import {
 } from "./exercisesControllers";
 import { type Request, type Response } from "express";
 import { CustomError } from "../../../CustomError/CustomError";
+import { Exercise } from "../../../database/models/Exercise";
 
-const mockBenchPress: ExerciseStructure = {
-  id: "1",
+const mockBenchPress: ExerciseData = {
+  id: "",
   name: "Bench Press",
   type: "strength",
-  equipment: "Barbell, Bench",
+  equipment: ["Barbell, Bench"],
   difficulty: 3,
-  muscles: {
-    primary: "Chest",
-    secondary: ["Triceps", "Shoulders"],
-  },
+  muscles: ["Chest", "Triceps"],
   description:
     "Lie on a bench with a barbell, lower it to your chest, and then push it back up.",
   sets: 3,
@@ -32,16 +29,13 @@ const mockBenchPress: ExerciseStructure = {
   createdBy: "Alex0987",
 };
 
-const mockSquat: ExerciseStructure = {
-  id: "2",
+const mockSquat: ExerciseData = {
+  id: "",
   name: "Squat",
   type: "strength",
-  equipment: "Barbell, Power Rack",
+  equipment: ["Barbell, Power Rack"],
   difficulty: 4,
-  muscles: {
-    primary: "Quadriceps",
-    secondary: ["Glutes", "Hamstrings"],
-  },
+  muscles: ["Quadriceps", "Glutes"],
   description:
     "Place a barbell on your shoulders behind your neck, bend your knees to lower your hips until your thighs are parallel to the floor, then extend your legs to return to standing.",
   sets: 3,
@@ -49,10 +43,10 @@ const mockSquat: ExerciseStructure = {
   rest: 90,
   duration: 0,
   image: "https://example.com/squat.jpg",
-  createdBy: "Alex0987",
+  createdBy: "",
 };
 
-const mockExercisesList: ExercisesStructure = [mockBenchPress, mockSquat];
+const mockExercisesList: ExercisesData = [mockBenchPress, mockSquat];
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -65,6 +59,7 @@ describe("Given a getExercises controller", () => {
         json: jest.fn().mockResolvedValue(mockExercisesList),
       };
       const next = jest.fn();
+
       const expectedStatus = 200;
 
       Exercise.find = jest.fn().mockImplementationOnce(() => ({
@@ -122,24 +117,42 @@ describe("Given a getExercises controller", () => {
 
 describe("Given a getUserExercises controller", () => {
   describe("When it receives a response", () => {
-    test("Then it should call its status method with status code 200 and its json method with the exercise list", async () => {
+    test("Then it should call its status method with 200", async () => {
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue(mockExercisesList),
+      };
       const req: Partial<Request> = {};
+      const next = jest.fn();
+      const expectedStatusCode = 200;
+      req.body = { createdBy: "afdafewqasca12312xa" };
+
+      Exercise.find = jest.fn().mockImplementationOnce(() => ({
+        exec: jest.fn().mockReturnValue({ createdBy: "afdafewqasca12312xa" }),
+      }));
+
+      await getUserExercises(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
+    });
+
+    test("Then it should call its json method", async () => {
+      const req: Partial<Request> = {};
+
       const res: Partial<Response> = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockResolvedValue(mockExercisesList),
       };
       const next = jest.fn();
-      const expectedStatus = 200;
 
-      req.body = { createdBy: "Alex0987" };
+      req.params = { postedBy: "afdafewqasca12312xa" };
 
       Exercise.find = jest.fn().mockImplementationOnce(() => ({
         exec: jest.fn().mockReturnValue(mockExercisesList),
       }));
 
-      await getUserExercises(req as CustomUserRequest, res as Response, next);
+      await getUserExercises(req as CustomRequest, res as Response, next);
 
-      expect(res.status).toHaveBeenCalledWith(expectedStatus);
       expect(res.json).toHaveBeenCalledWith({ exercises: mockExercisesList });
     });
   });
@@ -147,10 +160,12 @@ describe("Given a getUserExercises controller", () => {
   describe("When it receives a bad request", () => {
     test("Then it should call its next function with an error", async () => {
       const req: Partial<Request> = {};
+
       const res: Partial<Response> = {
         status: jest.fn().mockReturnThis(),
-        json: jest.fn().mockResolvedValue(mockExercisesList),
+        json: jest.fn().mockResolvedValue({}),
       };
+
       const next = jest.fn();
 
       const expectedError = new CustomError(
@@ -161,7 +176,7 @@ describe("Given a getUserExercises controller", () => {
 
       req.body = {};
 
-      await getUserExercises(req as CustomUserRequest, res as Response, next);
+      await getUserExercises(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
     });
@@ -171,7 +186,7 @@ describe("Given a getUserExercises controller", () => {
 describe("Given a deleteExercise controller", () => {
   describe("When it receives a response", () => {
     test("Then it should call its status method with status 200", async () => {
-      const req: Partial<CustomUserRequest> = {
+      const req: Partial<CustomRequest> = {
         params: { id: `${mockBenchPress.id}` },
       };
 
@@ -188,15 +203,15 @@ describe("Given a deleteExercise controller", () => {
         exec: jest.fn().mockReturnValue(mockBenchPress),
       }));
 
-      await deleteExercise(req as CustomUserRequest, res as Response, next);
+      await deleteExercise(req as CustomRequest, res as Response, next);
 
-      expect(res.json).toHaveBeenCalledWith({ exercise: mockBenchPress });
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
     });
   });
 
   describe("When it receives a bad request", () => {
     test("Then it should call its next function with an error", async () => {
-      const req: Partial<CustomUserRequest> = {};
+      const req: Partial<CustomRequest> = {};
 
       const res: Partial<Response> = {
         status: jest.fn().mockReturnThis(),
@@ -215,7 +230,7 @@ describe("Given a deleteExercise controller", () => {
 
       Exercise.findByIdAndDelete = jest.fn().mockReturnValue(undefined);
 
-      await deleteExercise(req as CustomUserRequest, res as Response, next);
+      await deleteExercise(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
     });

@@ -1,13 +1,15 @@
+import "../../../loadEnvironment.js";
 import { createClient } from "@supabase/supabase-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { CustomError } from "../../../CustomError/CustomError.js";
-import Exercise from "../../../database/models/Exercise.js";
+
 import {
-  type CustomCreateExerciseRequest,
-  type CustomUserRequest,
+  type ExerciseData,
+  type CustomRequest,
+  type ExerciseStructure,
 } from "../../../types/types.js";
-import fs from "fs/promises";
-import path from "path";
+import mongoose from "mongoose";
+import { Exercise } from "../../../database/models/Exercise.js";
 
 export const getExercises = async (
   req: Request,
@@ -30,12 +32,12 @@ export const getExercises = async (
 };
 
 export const getUserExercises = async (
-  req: CustomUserRequest,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const exercises = await Exercise.find({ createdBy: req.createdBy }).exec();
+    const exercises = await Exercise.find({ createdBy: req.userId }).exec();
 
     res.status(200).json({ exercises });
   } catch (error) {
@@ -50,16 +52,16 @@ export const getUserExercises = async (
 };
 
 export const deleteExercise = async (
-  req: CustomUserRequest,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { idExercise } = req.params;
+  const { idExercise: exerciseId } = req.params;
 
   try {
     const exercise = await Exercise.findByIdAndDelete({
-      _id: idExercise,
-      createdBy: req.createdBy,
+      _id: exerciseId,
+      createdBy: req.userId,
     }).exec();
 
     res.status(200).json({ exercise });
@@ -74,37 +76,46 @@ export const deleteExercise = async (
   }
 };
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_KEY!;
-const supabaseBucket = process.env.SUPABACE_BUCKET!;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 export const createExercise = async (
-  req: CustomCreateExerciseRequest,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const exerciseDetails = req.body;
+  const {
+    name,
+    image,
+    type,
+    equipment,
+    difficulty,
+    muscles,
+    description,
+    sets,
+    reps,
+    rest,
+    duration,
+  } = req.body as ExerciseStructure;
+
+  const { userId } = req;
 
   try {
-    const imageName = req.file?.filename;
+    const newExercise: ExerciseStructure = {
+      name,
+      image,
+      type,
+      equipment,
+      difficulty,
+      muscles,
+      description,
+      sets,
+      reps,
+      rest,
+      duration,
+      createdBy: new mongoose.Types.ObjectId(userId),
+    };
 
-    const image = await fs.readFile(path.join("uploads", imageName!));
+    const createExercise = await Exercise.create(newExercise);
 
-    await supabase.storage.from(supabaseBucket).upload(imageName!, image);
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(supabaseBucket).getPublicUrl(imageName!);
-
-    const exercise = await Exercise.create({
-      ...exerciseDetails,
-      image: imageName,
-      backupImage: publicUrl,
-    });
-
-    res.status(201).json({ exercise });
+    res.status(201).json({ exercise: createExercise });
   } catch (error) {
     const customError = new CustomError(
       "Could not create the exercise",
