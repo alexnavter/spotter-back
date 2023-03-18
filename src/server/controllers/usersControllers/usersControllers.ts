@@ -9,6 +9,7 @@ import {
   type CustomJwtPayload,
   type LoginCredentials,
 } from "./types.js";
+import { type CustomRequest } from "../../../types/types.js";
 
 export const loginUser = async (
   req: Request<
