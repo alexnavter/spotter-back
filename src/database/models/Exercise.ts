@@ -1,17 +1,12 @@
 import { model, Schema } from "mongoose";
 
-const exerciseSchema = new Schema({
+export const exerciseSchema = new Schema({
   name: {
-    type: String,
-    required: true,
-  },
-  image: {
     type: String,
     required: true,
   },
   type: {
     type: String,
-    enum: ["Upper body", "Lower body"],
     required: true,
   },
   equipment: {
@@ -25,14 +20,8 @@ const exerciseSchema = new Schema({
     required: true,
   },
   muscles: {
-    primary: {
-      type: String,
-      required: true,
-    },
-    secondary: {
-      type: [String],
-      default: [],
-    },
+    type: String,
+    required: true,
   },
   description: {
     type: String,
@@ -54,9 +43,14 @@ const exerciseSchema = new Schema({
     type: Number,
     required: false,
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  backupImage: {
+    type: String,
+  },
   createdBy: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
-const Exercise = model("Exercise", exerciseSchema, "exercises");
-
-export default Exercise;
+export const Exercise = model("Exercise", exerciseSchema, "exercises");

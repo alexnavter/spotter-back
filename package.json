@@ -11,7 +11,9 @@
     "start:dev": "node --watch dist",
     "test": "npx jest",
     "test:dev": "npx jest --watchAll=true",
-    "test:coverage": "npx jest --coverage --watchAll=false",
+    "test:unit": "jest --config=jest.config.cjs",
+    "test:integration": "jest --config=jest.integration.config.cjs",
+    "test:coverage": "npm run test:unit -- --coverage --watchAll=false && npm run test:integration -- --coverage --watchAll=false",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -32,12 +34,14 @@
     "ts-jest": "^29.0.5"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.11.0",
     "@types/cors": "^2.8.13",
     "@types/debug": "^4.1.7",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.4.0",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/morgan": "^1.9.4",
+    "@types/multer": "^1.4.7",
     "@types/supertest": "^2.0.12",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.2.0",
@@ -51,6 +55,7 @@
     "mongoose": "^6.10.1",
     "morgan": "^1.10.0",
     "mquery": "^5.0.0",
+    "multer": "^1.4.5-lts.1",
     "supertest": "^6.3.3",
     "typescript": "^4.9.5"
   }

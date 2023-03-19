@@ -44,12 +44,12 @@ export const loginUser = async (
     }
 
     const jwtPayload: CustomJwtPayload = {
-      sub: user?._id.toString(),
+      sub: user._id.toString(),
       email: user.email,
     };
 
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET!, {
-      expiresIn: "2d",
+      expiresIn: "7d",
     });
 
     res.status(200).json({ token });

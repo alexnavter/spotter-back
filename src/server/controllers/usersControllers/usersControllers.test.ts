@@ -1,13 +1,11 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { CustomError } from "../../../CustomError/CustomError";
 import User from "../../../database/models/User";
-import {
-  type CustomLoginRequest,
-  type CustomRegisterRequest,
-} from "../../../types/types";
+
 import { type RegisterCredentials, type LoginCredentials } from "./types";
 import { loginUser, registerUser } from "./usersControllers";
 import bcrypt from "bcryptjs";
+import { type CustomRequest } from "../../../types/types";
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -15,14 +13,15 @@ afterEach(async () => {
   jest.clearAllMocks();
 });
 
-describe("Given a loginUser controller", () => {
-  const req: Partial<Request> = {};
+const res: Partial<Response> = {
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn(),
+};
 
-  const res: Partial<Response> = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-  };
-  const next: Partial<NextFunction> = jest.fn();
+const next: Partial<NextFunction> = jest.fn();
+
+describe("Given a loginUser controller", () => {
+  const req: Partial<CustomRequest> = {};
 
   const mockLoginUser: LoginCredentials = {
     email: "alex@gmail.com",
@@ -44,7 +43,11 @@ describe("Given a loginUser controller", () => {
       }));
 
       await loginUser(
-        req as CustomLoginRequest,
+        req as CustomRequest<
+          Record<string, unknown>,
+          Record<string, unknown>,
+          LoginCredentials
+        >,
         res as Response,
         next as NextFunction
       );
@@ -62,7 +65,11 @@ describe("Given a loginUser controller", () => {
       }));
 
       await loginUser(
-        req as CustomLoginRequest,
+        req as CustomRequest<
+          Record<string, unknown>,
+          Record<string, unknown>,
+          LoginCredentials
+        >,
         res as Response,
         next as NextFunction
       );
@@ -73,7 +80,7 @@ describe("Given a loginUser controller", () => {
 });
 
 describe("Given a registerUser controller", () => {
-  const req: Partial<Request> = {};
+  const req: Partial<CustomRequest> = {};
 
   const res: Partial<Response> = {
     status: jest.fn().mockReturnThis(),
@@ -103,7 +110,11 @@ describe("Given a registerUser controller", () => {
       User.create = jest.fn().mockResolvedValue(mockRegisterUser);
 
       await registerUser(
-        req as CustomRegisterRequest,
+        req as CustomRequest<
+          Record<string, unknown>,
+          Record<string, unknown>,
+          RegisterCredentials
+        >,
         res as Response,
         next as NextFunction
       );
@@ -128,7 +139,11 @@ describe("Given a registerUser controller", () => {
       });
 
       await registerUser(
-        req as CustomRegisterRequest,
+        req as CustomRequest<
+          Record<string, unknown>,
+          Record<string, unknown>,
+          RegisterCredentials
+        >,
         res as Response,
         next as NextFunction
       );

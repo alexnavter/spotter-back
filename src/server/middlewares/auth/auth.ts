@@ -1,10 +1,10 @@
 import { type NextFunction, type Response } from "express";
-import { type CustomUserRequest } from "../../../types/types";
+import { type CustomRequest } from "../../../types/types";
 import { type CustomJwtPayload } from "../../controllers/usersControllers/types";
 import jwt from "jsonwebtoken";
 import { CustomError } from "../../../CustomError/CustomError.js";
 
-const auth = (req: CustomUserRequest, res: Response, next: NextFunction) => {
+const auth = (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.header("Authorization");
 
@@ -23,7 +23,7 @@ const auth = (req: CustomUserRequest, res: Response, next: NextFunction) => {
       process.env.JWT_SECRET!
     ) as CustomJwtPayload;
 
-    req.createdBy = createdBy;
+    req.userId = createdBy;
 
     next();
   } catch (error: unknown) {
