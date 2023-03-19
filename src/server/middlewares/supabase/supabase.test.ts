@@ -24,10 +24,10 @@ const next: NextFunction = jest.fn();
 describe("Given a supabase middleware", () => {
   describe("When it receives a request with a file to upload", () => {
     test("Then it should rename that file, upload it, and call its next function", async () => {
-      fs.readFile = jest.fn().mockRejectedValueOnce(mockImagePath);
+      fs.readFile = jest.fn().mockResolvedValueOnce(mockImagePath);
 
-      supabase.storage.from("images").upload = jest.fn();
-      supabase.storage.from("images").getPublicUrl = jest
+      supabase.storage.from("exercises").upload = jest.fn();
+      supabase.storage.from("exercises").getPublicUrl = jest
         .fn()
         .mockReturnValueOnce({ data: { publicUrl: mockImagePath } });
 

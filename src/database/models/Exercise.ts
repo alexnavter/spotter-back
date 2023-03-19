@@ -7,7 +7,6 @@ export const exerciseSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ["Upper body", "Lower body"],
     required: true,
   },
   equipment: {

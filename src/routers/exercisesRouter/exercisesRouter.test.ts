@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import connectDatabase from "../../database/connectDatabase";
 import { app } from "../../server";
 import { Exercise } from "../../database/models/Exercise";
-import { type ExerciseData } from "../../types/types";
+import { type ExerciseStructure, type ExerciseData } from "../../types/types";
 import jwt from "jsonwebtoken";
 
 let mongodbServer: MongoMemoryServer;
@@ -30,8 +30,7 @@ afterEach(async () => {
   jest.clearAllMocks();
 });
 
-const mockBenchPress: ExerciseData = {
-  id: "",
+const mockBenchPress: ExerciseStructure = {
   name: "Bench Press",
   type: "strength",
   equipment: "Barbell",
@@ -39,8 +38,8 @@ const mockBenchPress: ExerciseData = {
   muscles: "Chest",
   description:
     "Lie on a bench with a barbell, lower it to your chest, and then push it back up.",
+
   image: "bench-press.webp",
-  createdBy: "Alex0987",
 };
 
 describe("Given a '/exercises' endpoint", () => {

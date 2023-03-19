@@ -4,6 +4,7 @@ import {
   type ExerciseData,
 } from "../../../types/types";
 import {
+  createExercise,
   deleteExercise,
   getExercises,
   getUserExercises,
@@ -231,6 +232,72 @@ describe("Given a deleteExercise controller", () => {
       Exercise.findByIdAndDelete = jest.fn().mockReturnValue(undefined);
 
       await deleteExercise(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(expectedError);
+    });
+  });
+});
+
+describe("Given a createEvent controller", () => {
+  describe("When it receives a response", () => {
+    test("Then it should respond with status 201", async () => {
+      const req: Partial<CustomRequest> = {};
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue(mockBenchPress),
+      };
+      const next = jest.fn();
+
+      req.body = mockBenchPress;
+
+      const expectedStatus = 201;
+
+      Exercise.create = jest.fn().mockReturnValue(mockBenchPress);
+
+      await createExercise(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+    });
+
+    test("Then it should call its json method", async () => {
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue(mockBenchPress),
+      };
+      const req: Partial<CustomRequest> = {};
+
+      const next = jest.fn();
+
+      req.body = mockBenchPress;
+
+      Exercise.create = jest.fn().mockReturnValue(mockBenchPress);
+
+      await createExercise(req as CustomRequest, res as Response, next);
+
+      expect(res.json).toHaveBeenCalledWith({ exercise: mockBenchPress });
+    });
+  });
+
+  describe("When it receives a bad request", () => {
+    test("Then it should throw an error", async () => {
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue({}),
+      };
+      const req: Partial<CustomRequest> = {};
+      const next = jest.fn();
+
+      const expectedError = new CustomError(
+        "An error ocurred at creating the exercise",
+        400,
+        "Could not create the exercise"
+      );
+
+      req.body = {};
+
+      Exercise.create = jest.fn().mockRejectedValue(undefined);
+
+      await createExercise(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
     });

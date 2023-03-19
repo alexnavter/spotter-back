@@ -7,7 +7,6 @@ import { type NextFunction, type Response } from "express";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_KEY!;
-const supabaseBucket = process.env.SUPABASE_BUCKET!;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -19,17 +18,15 @@ const supaBase = async (
   try {
     const imageName = req.file?.filename;
 
-    const imagePath = path.join("uploads", imageName!);
+    const image = await fs.readFile(path.join("upload", imageName!));
 
-    const backupImage = await fs.readFile(imagePath);
-
-    await supabase.storage.from(supabaseBucket).upload(imageName!, backupImage);
+    await supabase.storage.from("exercises").upload(imageName!, image);
 
     const {
       data: { publicUrl },
-    } = supabase.storage.from(supabaseBucket).getPublicUrl(imageName!);
+    } = supabase.storage.from("exercises").getPublicUrl(imageName!);
 
-    req.body.image = imagePath;
+    req.body.image = image;
     req.body.backupImage = publicUrl;
 
     next();

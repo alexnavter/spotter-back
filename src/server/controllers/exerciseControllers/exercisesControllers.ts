@@ -79,17 +79,39 @@ export const createExercise = async (
   res: Response,
   next: NextFunction
 ) => {
-  const exercise = req.body as ExerciseStructure;
-
+  const {
+    name,
+    type,
+    equipment,
+    difficulty,
+    muscles,
+    description,
+    sets,
+    reps,
+    rest,
+    duration,
+    image,
+  } = req.body as ExerciseStructure;
   const { userId } = req;
-
   try {
-    const newExercise = await Exercise.create({
-      ...exercise,
+    const newExercise: ExerciseStructure = {
+      name,
+      type,
+      equipment,
+      difficulty,
+      muscles,
+      description,
+      sets,
+      reps,
+      rest,
+      duration,
+      image,
       createdBy: new mongoose.Types.ObjectId(userId),
-    });
+    };
 
-    res.status(201).json({ ...newExercise.toJSON() });
+    const createdExercise = await Exercise.create(newExercise);
+
+    res.status(201).json({ exercise: createdExercise });
   } catch (error) {
     const customError = new CustomError(
       "An error ocurred at creating the exercise",

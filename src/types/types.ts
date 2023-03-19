@@ -11,10 +11,10 @@ export interface ExerciseData {
   difficulty: number;
   muscles: string;
   description: string;
-  sets?: number;
-  reps?: number;
-  rest?: number;
-  duration?: number;
+  sets: number;
+  reps: number;
+  rest: number;
+  duration: number;
   image: string;
   createdBy: string;
 }

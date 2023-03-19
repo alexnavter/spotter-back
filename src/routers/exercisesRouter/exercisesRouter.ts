@@ -11,22 +11,25 @@ import path from "path";
 import supaBase from "../../server/middlewares/supabase/supabase.js";
 import { validate } from "express-validation";
 import { exercisesSchema } from "../../server/schemas/exerciseSchema/exercisesSchema.js";
+import crypto from "crypto";
 
 const exercisesRouter = Router();
 
-const storage = multer.diskStorage({
-  destination: "uploads/",
-  filename(req, file, callback) {
-    const suffix = crypto.randomUUID();
-    const extension = path.extname(file.originalname);
-    const basename = path.basename(file.originalname, extension);
-    const filename = `${basename}-${suffix}${extension}`;
+const configMulter = {
+  storage: multer.diskStorage({
+    destination: "uploads/",
+    filename(req, file, callback) {
+      const suffix = crypto.randomUUID();
+      const extension = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, extension);
+      const filename = `${basename}-${suffix}${extension}`;
 
-    callback(null, filename);
-  },
-});
+      callback(null, filename);
+    },
+  }),
+};
 
-const upload = multer({ storage });
+const upload = multer({ ...configMulter, limits: { fileSize: 7000000 } });
 
 const getExercisesRoute = "/";
 const getUserExercisesRoute = "/my-exercises";
