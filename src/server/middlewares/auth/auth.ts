@@ -18,12 +18,12 @@ const auth = (req: CustomRequest, res: Response, next: NextFunction) => {
 
     const token = authHeader.replace(/^Bearer\s*/, "");
 
-    const { sub: userId } = jwt.verify(
+    const { sub: createdBy } = jwt.verify(
       token,
       process.env.JWT_SECRET!
     ) as CustomJwtPayload;
 
-    req.userId = userId;
+    req.userId = createdBy;
 
     next();
   } catch (error: unknown) {

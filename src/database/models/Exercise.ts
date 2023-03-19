@@ -21,7 +21,8 @@ export const exerciseSchema = new Schema({
     required: true,
   },
   muscles: {
-    type: [String],
+    type: String,
+    required: true,
   },
   description: {
     type: String,

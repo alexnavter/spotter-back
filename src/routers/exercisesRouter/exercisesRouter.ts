@@ -8,6 +8,9 @@ import {
 } from "../../server/controllers/exerciseControllers/exercisesControllers.js";
 import auth from "../../server/middlewares/auth/auth.js";
 import path from "path";
+import supaBase from "../../server/middlewares/supabase/supabase.js";
+import { validate } from "express-validation";
+import { exercisesSchema } from "../../server/schemas/exerciseSchema/exercisesSchema.js";
 
 const exercisesRouter = Router();
 
@@ -28,15 +31,18 @@ const upload = multer({ storage });
 const getExercisesRoute = "/";
 const getUserExercisesRoute = "/my-exercises";
 const deleteExerciseRoute = "/delete/:idExercise";
-const createExerciseRoute = "/create-exercise";
+const createExerciseRoute = "/create";
 
 exercisesRouter.get(getExercisesRoute, getExercises);
+
 exercisesRouter.get(getUserExercisesRoute, auth, getUserExercises);
 exercisesRouter.delete(deleteExerciseRoute, auth, deleteExercise);
 exercisesRouter.post(
   createExerciseRoute,
   auth,
   upload.single("image"),
+  validate(exercisesSchema, {}, { abortEarly: false }),
+  supaBase,
   createExercise
 );
 

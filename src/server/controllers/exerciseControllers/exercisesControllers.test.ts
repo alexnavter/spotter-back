@@ -16,9 +16,9 @@ const mockBenchPress: ExerciseData = {
   id: "",
   name: "Bench Press",
   type: "strength",
-  equipment: ["Barbell, Bench"],
+  equipment: "Barbell",
   difficulty: 3,
-  muscles: ["Chest", "Triceps"],
+  muscles: "Chest",
   description:
     "Lie on a bench with a barbell, lower it to your chest, and then push it back up.",
   sets: 3,
@@ -33,9 +33,9 @@ const mockSquat: ExerciseData = {
   id: "",
   name: "Squat",
   type: "strength",
-  equipment: ["Barbell, Power Rack"],
+  equipment: "Barbell",
   difficulty: 4,
-  muscles: ["Quadriceps", "Glutes"],
+  muscles: "Quadriceps",
   description:
     "Place a barbell on your shoulders behind your neck, bend your knees to lower your hips until your thighs are parallel to the floor, then extend your legs to return to standing.",
   sets: 3,

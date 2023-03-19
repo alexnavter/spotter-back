@@ -1,10 +1,8 @@
 import "../../../loadEnvironment.js";
-import { createClient } from "@supabase/supabase-js";
 import { type NextFunction, type Request, type Response } from "express";
 import { CustomError } from "../../../CustomError/CustomError.js";
 
 import {
-  type ExerciseData,
   type CustomRequest,
   type ExerciseStructure,
 } from "../../../types/types.js";
@@ -81,44 +79,20 @@ export const createExercise = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    image,
-    type,
-    equipment,
-    difficulty,
-    muscles,
-    description,
-    sets,
-    reps,
-    rest,
-    duration,
-  } = req.body as ExerciseStructure;
+  const exercise = req.body as ExerciseStructure;
 
   const { userId } = req;
 
   try {
-    const newExercise: ExerciseStructure = {
-      name,
-      image,
-      type,
-      equipment,
-      difficulty,
-      muscles,
-      description,
-      sets,
-      reps,
-      rest,
-      duration,
+    const newExercise = await Exercise.create({
+      ...exercise,
       createdBy: new mongoose.Types.ObjectId(userId),
-    };
+    });
 
-    const createExercise = await Exercise.create(newExercise);
-
-    res.status(201).json({ exercise: createExercise });
+    res.status(201).json({ ...newExercise.toJSON() });
   } catch (error) {
     const customError = new CustomError(
-      "Could not create the exercise",
+      "An error ocurred at creating the exercise",
       400,
       "Could not create the exercise"
     );
