@@ -28,8 +28,8 @@ const supaBase = async (
       data: { publicUrl },
     } = supabase.storage.from("exercises").getPublicUrl(imageName!);
 
-    req.body.image = imagePath;
-    req.body.backupImage = publicUrl;
+    req.body.image = publicUrl;
+    req.body.backupImage = imagePath;
 
     next();
   } catch (error) {
