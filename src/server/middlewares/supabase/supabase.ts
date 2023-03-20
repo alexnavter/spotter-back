@@ -18,7 +18,9 @@ const supaBase = async (
   try {
     const imageName = req.file?.filename;
 
-    const image = await fs.readFile(path.join("upload", imageName!));
+    const imagePath = path.join("uploads", imageName!);
+
+    const image = await fs.readFile(imagePath);
 
     await supabase.storage.from("exercises").upload(imageName!, image);
 
@@ -26,7 +28,7 @@ const supaBase = async (
       data: { publicUrl },
     } = supabase.storage.from("exercises").getPublicUrl(imageName!);
 
-    req.body.image = image;
+    req.body.image = imagePath;
     req.body.backupImage = publicUrl;
 
     next();

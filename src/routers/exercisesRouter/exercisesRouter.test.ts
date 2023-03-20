@@ -34,7 +34,7 @@ const mockBenchPress: ExerciseStructure = {
   name: "Bench Press",
   type: "strength",
   equipment: "Barbell",
-  difficulty: 3,
+  difficulty: "3",
   muscles: "Chest",
   description:
     "Lie on a bench with a barbell, lower it to your chest, and then push it back up.",

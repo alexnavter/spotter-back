@@ -23,13 +23,12 @@ const configMulter = {
       const extension = path.extname(file.originalname);
       const basename = path.basename(file.originalname, extension);
       const filename = `${basename}-${suffix}${extension}`;
-
       callback(null, filename);
     },
   }),
 };
 
-const upload = multer({ ...configMulter, limits: { fileSize: 7000000 } });
+const upload = multer({ ...configMulter, limits: { fileSize: 100000000 } });
 
 const getExercisesRoute = "/";
 const getUserExercisesRoute = "/my-exercises";
