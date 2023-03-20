@@ -14,7 +14,7 @@ export const exerciseSchema = new Schema({
     required: true,
   },
   difficulty: {
-    type: Number,
+    type: String,
     min: 1,
     max: 5,
     required: true,
@@ -28,19 +28,19 @@ export const exerciseSchema = new Schema({
     required: true,
   },
   sets: {
-    type: Number,
+    type: String,
     required: false,
   },
   reps: {
-    type: Number,
+    type: String,
     required: false,
   },
   rest: {
-    type: Number,
+    type: String,
     required: false,
   },
   duration: {
-    type: Number,
+    type: String,
     required: false,
   },
   image: {
