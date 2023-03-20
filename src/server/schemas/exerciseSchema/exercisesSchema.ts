@@ -7,7 +7,7 @@ export const exercisesSchema = {
     equipment: Joi.string().required(),
     difficulty: Joi.string().required(),
     muscles: Joi.string().required(),
-    description: Joi.string().required(),
+    description: Joi.string(),
     sets: Joi.string(),
     reps: Joi.string(),
     rest: Joi.string(),

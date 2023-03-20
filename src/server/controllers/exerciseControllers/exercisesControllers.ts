@@ -108,7 +108,6 @@ export const createExercise = async (
       image,
       createdBy: new mongoose.Types.ObjectId(userId),
     };
-
     const createdExercise = await Exercise.create(newExercise);
 
     res.status(201).json({ exercise: createdExercise });
