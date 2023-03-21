@@ -6,6 +6,7 @@ import {
 import {
   createExercise,
   deleteExercise,
+  findExercise,
   getExercises,
   getUserExercises,
 } from "./exercisesControllers";
@@ -300,6 +301,75 @@ describe("Given a createEvent controller", () => {
       await createExercise(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(expectedError);
+    });
+  });
+});
+
+describe("Given a findExercise controller", () => {
+  describe("When it receives a response", () => {
+    test("Then it should call its status method with status 200", async () => {
+      const req: Partial<CustomRequest> = {
+        params: { id: `${mockBenchPress.id}` },
+      };
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue(mockBenchPress.id),
+      };
+      const next = jest.fn();
+
+      const expectedStatus = 200;
+
+      Exercise.findById = jest.fn().mockImplementationOnce(() => ({
+        exec: jest.fn().mockReturnValue(mockBenchPress),
+      }));
+
+      await findExercise(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+    });
+
+    test("Then it should call its json method with the exercise", async () => {
+      const req: Partial<CustomRequest> = {
+        params: { id: `${mockBenchPress.id}` },
+      };
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue(mockBenchPress.id),
+      };
+      const next = jest.fn();
+
+      Exercise.findById = jest.fn().mockImplementationOnce(() => ({
+        exec: jest.fn().mockReturnValue(mockBenchPress),
+      }));
+
+      await findExercise(req as CustomRequest, res as Response, next);
+
+      expect(res.json).toHaveBeenCalledWith({ exercise: mockBenchPress });
+    });
+  });
+
+  describe("When a bad request is received", () => {
+    test("Then it should call its next method with a custom error in it", async () => {
+      const req: Partial<CustomRequest> = {};
+      const res: Partial<Response> = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockResolvedValue({}),
+      };
+      const next = jest.fn();
+
+      req.params = {};
+
+      const newError = new CustomError(
+        "Couldn't find the exercise",
+        400,
+        "Couldn't find the exercise"
+      );
+
+      Exercise.findById = jest.fn().mockReturnValue(undefined);
+
+      await findExercise(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(newError);
     });
   });
 });
