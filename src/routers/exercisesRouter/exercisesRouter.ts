@@ -28,7 +28,7 @@ const configMulter = {
   }),
 };
 
-const upload = multer({ ...configMulter, limits: { fileSize: 100000000 } });
+const upload = multer({ ...configMulter, limits: { fileSize: 8000000 } });
 
 const getExercisesRoute = "/";
 const getUserExercisesRoute = "/my-exercises";
