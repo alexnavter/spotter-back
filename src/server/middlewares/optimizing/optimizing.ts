@@ -1,7 +1,7 @@
 import { type NextFunction, type Response } from "express";
 import path from "path";
 import sharp from "sharp";
-import { CustomError } from "../../../CustomError/CustomError";
+import { CustomError } from "../../../CustomError/CustomError.js";
 import { type CustomRequest } from "../../../types/types.js";
 
 const optimizing = async (
