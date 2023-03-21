@@ -12,6 +12,7 @@ import supaBase from "../../server/middlewares/supabase/supabase.js";
 import { validate } from "express-validation";
 import { exercisesSchema } from "../../server/schemas/exerciseSchema/exercisesSchema.js";
 import crypto from "crypto";
+import optimizing from "../../server/middlewares/optimizing/optimizing.js";
 
 const exercisesRouter = Router();
 
@@ -44,6 +45,7 @@ exercisesRouter.post(
   auth,
   upload.single("image"),
   validate(exercisesSchema, {}, { abortEarly: false }),
+  optimizing,
   supaBase,
   createExercise
 );
