@@ -3,6 +3,7 @@ import multer from "multer";
 import {
   createExercise,
   deleteExercise,
+  findExercise,
   getExercises,
   getUserExercises,
 } from "../../server/controllers/exerciseControllers/exercisesControllers.js";
@@ -35,6 +36,7 @@ const getExercisesRoute = "/";
 const getUserExercisesRoute = "/my-exercises";
 const deleteExerciseRoute = "/delete/:idExercise";
 const createExerciseRoute = "/create";
+const findExerciseByIdRoute = "/detail/:idExercise";
 
 exercisesRouter.get(getExercisesRoute, getExercises);
 
@@ -49,5 +51,6 @@ exercisesRouter.post(
   supaBase,
   createExercise
 );
+exercisesRouter.get(findExerciseByIdRoute, auth, findExercise);
 
 export default exercisesRouter;
