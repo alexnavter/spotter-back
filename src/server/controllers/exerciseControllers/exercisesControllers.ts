@@ -121,3 +121,25 @@ export const createExercise = async (
     next(customError);
   }
 };
+
+export const findExercise = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { idExercise } = req.params;
+
+  try {
+    const exerciseById = await Exercise.findById({ _id: idExercise }).exec();
+
+    res.status(200).json({ exercise: exerciseById });
+  } catch (error) {
+    const customError = new CustomError(
+      "Couldn't find the exercise",
+      400,
+      "Couldn't find the exercise"
+    );
+
+    next(customError);
+  }
+};
